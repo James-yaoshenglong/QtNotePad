@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QTextCursor>
+#include <QTimer>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -41,9 +42,13 @@ private slots:
 
     void on_cursor_position_changed();
 
+    void checkText(); //定时器信号触发的遍历文本函数
+
 private:
     Ui::MainWindow *ui;
 
     QString file_path ; //用于存储file path，作为几个function之间的交流
+
+    QTimer* timer; //定时器为了搞文本遍历事件
 };
 #endif // MAINWINDOW_H

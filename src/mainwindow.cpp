@@ -4,6 +4,10 @@
 #include <QFileDialog>
 #include <QTextStream>
 #include <QMessageBox>
+#include <QTimer>
+//#include <QTextDocument>
+//#include <QTextBlock>
+#include <QDebug>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -26,6 +30,11 @@ MainWindow::MainWindow(QWidget *parent)
 
     //用q text edit的line wrap mode选项搞横向滚动条
 
+    //用定时器每隔10S遍历一遍文本，将错误的文本进行红色或者下划线标注
+    timer = new QTimer(this);
+    timer->start(1000);
+    timer->setInterval(10000);
+    connect(timer,SIGNAL(timeout()),this,SLOT(checkText()));
 }
 
 MainWindow::~MainWindow()
@@ -151,6 +160,29 @@ void MainWindow::on_cursor_position_changed()
                              QString::number(ui->textEdit->textCursor().blockNumber()+1)+
                              QString(" column : ")+
                              QString::number(ui->textEdit->textCursor().columnNumber()+1));
+    //这里下一次可以添加检测总词数，总行数，是否修改的内容
+
+}
+
+
+void MainWindow::checkText(){
+    //这个事情现在用cursor+select来解决了
+    QTextCursor it = ui->textEdit->textCursor();
+    it.movePosition(QTextCursor::Start);
+    while(!it.atEnd()){
+        it.select(QTextCursor::WordUnderCursor); //这个cursor一move就没有用了
+        qDebug()<<it.selectedText(); //qdebug会自动换行
+        QTextCharFormat fmt;
+        fmt.setForeground(Qt::red);
+        it.setCharFormat(fmt);
+        it.movePosition(QTextCursor::NextWord); //这个比较玄学，下一个如果是标点符号中间加空格，就会选择标点符号
+
+        // 光标移动到最后, 并设置拥有焦点 //这一步的目的似乎是为了不影响后面的输入 //现在好像不起作用？？
+        QTextCursor c = ui->textEdit->textCursor();
+        c.movePosition(QTextCursor::End, QTextCursor::MoveAnchor);
+        ui->textEdit->setTextCursor(c);
+        ui->textEdit->setFocus(Qt::MouseFocusReason);
+    }
 
 }
 

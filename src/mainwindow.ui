@@ -23,6 +23,13 @@
      </widget>
     </item>
     <item>
+     <widget class="QLabel" name="label_line_count">
+      <property name="text">
+       <string>TextLabel</string>
+      </property>
+     </widget>
+    </item>
+    <item>
      <widget class="QLabel" name="label_index">
       <property name="text">
        <string>TextLabel</string>

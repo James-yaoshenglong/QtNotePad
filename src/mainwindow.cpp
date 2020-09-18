@@ -20,9 +20,11 @@ MainWindow::MainWindow(QWidget *parent)
     //设置新建窗口标题
     MainWindow::setWindowTitle("Plain text -- QtNotepad");
 
-    //添加行号，列号
+    //添加行号，列号，行数
+    ui->statusbar->addPermanentWidget(ui->label_line_count);
     ui->statusbar->addPermanentWidget(ui->label_index);
     ui->label_index->setText(QString("line : ")+QString::number(ui->textEdit->textCursor().blockNumber()+1)+QString(" column : ")+QString::number(ui->textEdit->textCursor().columnNumber()+1));
+    ui->label_line_count->setText(QString("Total line(s): ")+QString::number(ui->textEdit->document()->lineCount()));
 
     //之后想办法添加一个slot，在光标变化的时候进行变化显示
     //注意connect的使用,用SIGnal的时候要加（）,直接用名字的时候不用加（）,加了作用对象之后就不要加-》了,这里虽然实际变化者是label，但是slot在本类中，就要用this
@@ -161,7 +163,7 @@ void MainWindow::on_cursor_position_changed()
                              QString(" column : ")+
                              QString::number(ui->textEdit->textCursor().columnNumber()+1));
     //这里下一次可以添加检测总词数，总行数，是否修改的内容
-
+    ui->label_line_count->setText(QString("Total line(s): ")+QString::number(ui->textEdit->document()->lineCount()));
 }
 
 
@@ -176,12 +178,6 @@ void MainWindow::checkText(){
         fmt.setForeground(Qt::red);
         it.setCharFormat(fmt);
         it.movePosition(QTextCursor::NextWord); //这个比较玄学，下一个如果是标点符号中间加空格，就会选择标点符号
-
-        // 光标移动到最后, 并设置拥有焦点 //这一步的目的似乎是为了不影响后面的输入 //现在好像不起作用？？
-        QTextCursor c = ui->textEdit->textCursor();
-        c.movePosition(QTextCursor::End, QTextCursor::MoveAnchor);
-        ui->textEdit->setTextCursor(c);
-        ui->textEdit->setFocus(Qt::MouseFocusReason);
     }
 
 }
